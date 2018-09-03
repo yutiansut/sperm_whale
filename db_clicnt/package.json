@@ -1,0 +1,34 @@
+{
+  "name": "sperm_whale_client",
+  "version": "0.0.1",
+  "description": "database service",
+  "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "cd api && node main"
+  },
+  "main": "./index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": [
+      "database",
+      "l2 cache"
+  ],
+  "author": {
+      "name": "Mr.Panda",
+      "email": "xivistudios@gmail.com",
+      "url": "https://github.com/xivistudios"
+  },
+  "engines": {
+      "node": ">=8.1"
+  },
+  "homepage": "https://github.com/xivistudios",
+  "repository": {
+      "type": "",
+      "url": ""
+  },
+  "bugs": {
+      "url": "",
+      "email": ""
+  },
+  "license": "MIT"
+}
