@@ -1,12 +1,12 @@
-"use strict";
+"use strict"
 
 
 /**
  * Modules.
  * @private
  */
-const assert = require("assert").strict;
-const events = require("events");
+const assert = require("assert").strict
+const events = require("events")
 
 
 /**
@@ -14,16 +14,16 @@ const events = require("events");
  */
 module.exports = class {
   constructor () {
-    this.codeNumber = 0;
-    this.eventEmitters = new events.EventEmitter();
+    this.codeNumber = 0
+    this.eventEmitters = new events.EventEmitter()
 
     /**
      * 定时刷号
      * 每隔1秒重置号段位数
      */
     setInterval(function () {
-      codeNumber = 0;
-    }, 1000);
+      codeNumber = 0
+    }, 1000)
   }
 
 
@@ -33,10 +33,10 @@ module.exports = class {
    */
   get () {
     try {
-      codeNumber += 1;
-      return String(Date.now()) + String(codeNumber);
+      codeNumber += 1
+      return String(Date.now()) + String(codeNumber)
     } catch (error) {
-      this.eventEmitters.emit("error", error);
+      this.eventEmitters.emit("error", error)
     }
   }
 
@@ -47,6 +47,6 @@ module.exports = class {
    * @param {Function} handle
    */
   on (event, handle) {
-    this.eventEmitters.on(event, handle);
+    this.eventEmitters.on(event, handle)
   }
 }

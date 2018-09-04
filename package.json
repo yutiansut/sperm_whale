@@ -10,7 +10,8 @@
     "dependencies": {
         "toml": "*",
         "mongodb": "*",
-        "redis": "*"
+        "redis": "*",
+        "spermwhales": "*"
     },
     "devDependencies": {},
     "keywords": [

@@ -8,4 +8,4 @@
  */
 exports.isNullValue = function (value) {
   return (value !== null && value !== undefined) === true ? true : false
-};
+}

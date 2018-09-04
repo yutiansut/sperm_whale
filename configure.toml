@@ -2,3 +2,7 @@
 bindPort = 88
 bindIp = "127.0.0.1"
 keepAlive = 5000
+
+[auth]
+username = "panda"
+password = "test"

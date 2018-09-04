@@ -42,36 +42,36 @@
  * 触发事件
  * 通过消息队列订阅的消息管道将事件推送
  */
-"use strict";
+"use strict"
 
 // system env.
 const { 
   SPERMWHALE_HOME = __dirname,
   SPERMWHALE_CONF = "./configure.toml",
-} = process.env;
+} = process.env
 
 // Modules.
-const fs = require("fs");
-const net = require("net");
-const toml = require("toml");
+const fs = require("fs")
+const net = require("net")
+const toml = require("toml")
 
 // bin.
-const busService = require("spermwhales/busService");
-const taskNumber = require("./bin/task/number");
-const tcpService = require("./bin/tcp/service");
-const dataBaseProse = require("./bin/database/parse");
+const busService = require("spermwhales/busService")
+const taskNumber = require("./bin/task/number")
+const tcpService = require("./bin/tcp/service")
+const dataBaseProse = require("./bin/database/parse")
 
 // constructor.
-const busService = new busService();
-const configure = toml.parse(fs.readFileSync(SPERMWHALE_CONF));
-const tcpHandle = new tcpSocket({ configure, dataBaseProse });
-const server = net.createServer(socket => tcpHandle.handle(socket));
-const dataBaseProses = new dataBaseProse(busService);
+const busServices = new busService()
+const configure = toml.parse(fs.readFileSync(SPERMWHALE_CONF))
+const tcpHandle = new tcpSocket({ configure, dataBaseProse })
+const server = net.createServer(socket => tcpHandle.handle(socket))
+const dataBaseProses = new dataBaseProse(busService)
 
 // listen.
-tcpHandle.bind(server);
-server.listen(configure.net.bindPort);
+tcpHandle.bind(server)
+server.listen(configure.net.bindPort)
 
 // listen database.
-busServices.Redis(configure.redis);
-busServices.Mongodb(configure.mongodb);
+busServices.Redis(configure.redis)
+busServices.Mongodb(configure.mongodb)

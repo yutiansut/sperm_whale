@@ -1,8 +1,9 @@
-"use strict";
+"use strict"
 
-const assert = require("assert").strict;
-const events = require("events");
-const protocol = require("./protocol");
+const assert = require("assert").strict
+const events = require("events")
+const protocol = require("./protocol")
+const auth = require("../auth")
 
 /**
  * TCP服务类
@@ -17,10 +18,10 @@ module.exports = class {
    * @private
    */
   constructor ({ configure, dataBaseProse }) {
-    this.configure = configure;
-    this.dataBaseProse = dataBaseProse;
-    this.eventEmitters = new events.EventEmitter();
-    this.loop = {};
+    this.configure = configure
+    this.dataBaseProse = dataBaseProse
+    this.eventEmitters = new events.EventEmitter()
+    this.loop = {}
   }
 
   /**
@@ -39,23 +40,23 @@ module.exports = class {
        * 清理连接池
        */
       if (socketHandle.destroyed) {
-        socketHandle.end();
-        return;
+        socketHandle.end()
+        return
       }
 
       // 过滤心跳包
       if ((Buffer.from([0x01]).equals(data))) {
-        socketHandle.write(data);
-        return;
+        socketHandle.write(data)
+        return
       }
 
       /**
        * 消息打包
        * 发送消息
        */
-      socketHandle.write(protocol.from(data));
+      socketHandle.write(protocol.from(data))
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 
@@ -73,16 +74,18 @@ module.exports = class {
 
           // 过滤心跳包
           if ((Buffer.from([0x01]).equals(bufferHandle))) {
-            this.send(Buffer.from([0x00]));
-            return;
+            this.send(Buffer.from([0x00]))
+            return
           }
 
           // 解包
-          await this.dataBaseProse.parse(protocol.parse(bufferHandle));
+          let msgHandle = protocol.parse(bufferHandle)
+          let msgBody = JSON.parse(msgHandle.data.toString())
+          await this.dataBaseProse.parse()
         } catch (error) {
-          this.eventEmitters.emit("error", "socket close");
+          this.eventEmitters.emit("error", "socket close")
         }
-      });
+      })
 
       // 结束
       socketHandle.on("end", () => {
@@ -90,12 +93,12 @@ module.exports = class {
          * TODO:
          * 发送FIN
          */
-      });
+      })
 
       // 超时
       socketHandle.on("timeout", () => {
-        socketHandle.destroy("timeout");
-      });
+        socketHandle.destroy("timeout")
+      })
 
       // 关闭
       socketHandle.on("close", hadError => {
@@ -105,15 +108,15 @@ module.exports = class {
          * 发生错误
          */
         if (hadError) {
-          socketHandle.destroy("close");
-          this.eventEmitters.emit("error", "socket close");
+          socketHandle.destroy("close")
+          this.eventEmitters.emit("error", "socket close")
         }
-      });
+      })
 
       // 错误
       socketHandle.on("error", error => {
-        this.eventEmitters.emit("error", error);
-      });
+        this.eventEmitters.emit("error", error)
+      })
 
       // 写入缓冲区为空
       socketHandle.on("drain", () => {
@@ -122,14 +125,14 @@ module.exports = class {
          * 发送缓冲区已经空
          * <未做处理>
          */
-      });
+      })
 
       // keepAlive
       socketHandle._keepAlive = setInterval(() => {
-        this.send(socketHandle, Buffer.from([0x01]));
-      }, this.configure.net.keepAlive);
+        this.send(socketHandle, Buffer.from([0x01]))
+      }, this.configure.net.keepAlive)
     } catch (error) {
-      this.eventEmitters.emit("error", error);
+      this.eventEmitters.emit("error", error)
     }
   }
 
@@ -143,12 +146,12 @@ module.exports = class {
     // 服务关闭
     serverHandle.on("close", () => {
       this.eventEmitters.emit("error", "server close")
-    });
+    })
 
     // 错误
     serverHandle.on("error", error => {
-      this.eventEmitters.emit("error", error);
-    });
+      this.eventEmitters.emit("error", error)
+    })
   }
 
   /**
@@ -158,7 +161,7 @@ module.exports = class {
    * @private
    */
   on (event, handle) {
-    this.eventEmitters.on(event, handle);
+    this.eventEmitters.on(event, handle)
   }
 
 }

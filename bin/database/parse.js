@@ -1,7 +1,7 @@
-"use strict";
+"use strict"
 
-const assert = require("assert").strict;
-const isNullValue = require("../util").isNullValue;
+const assert = require("assert").strict
+const isNullValue = require("../util").isNullValue
 
 /**
  * 数据库命令解析类
@@ -10,8 +10,8 @@ const isNullValue = require("../util").isNullValue;
  */
 module.exports = class {
   constructor ({ mongodb, redis }) {
-    this.mongodb = mongodb;
-    this.redis = redis;
+    this.mongodb = mongodb
+    this.redis = redis
   }
 
 
@@ -34,41 +34,38 @@ module.exports = class {
   /**
    * 解析
    */
-  parse () {
+  parse (msg) {
     return new Promise(async (resolve, reject) => {
       try {
   
         /**
          * 验证数据
          */
-        assert.deepStrictEqual(typeof sql, "object", "命令错误");
-        assert.deepStrictEqual(typeof sql.db, "string", "命令错误");
-        assert.deepStrictEqual(typeof sql.collection, "string", "命令错误");
-        assert.deepStrictEqual(typeof sql.auth, "string", "命令错误");
-        assert.deepStrictEqual(Array.isArray(sql.use), "object", "命令错误");
-        assert.deepStrictEqual(typeof sql.cursor, "string", "命令错误");
+        assert.deepStrictEqual(typeof msg, "object")
+        assert.deepStrictEqual(typeof msg.db, "string")
+        assert.deepStrictEqual(typeof msg.collection, "string")
+        assert.deepStrictEqual(typeof msg.auth, "string")
+        assert.deepStrictEqual(Array.isArray(msg.use), "object")
+        assert.deepStrictEqual(typeof msg.cursor, "string")
   
         /**
          * 认证
          */
-        await this.auth(sql);
-
-        // 提交代理
-        this.proxy({ db, collection, method, params });
+        await this.auth(msg)
 
         /**
-         * 连接数据表
+         * 提交代理
          */
-        let db = this.mongodb[sql.db];
-        assert.deepStrictEqual(isNullValue(db), true, "找不到数据库");
-        let collection = db[sql.collection];
-        assert.deepStrictEqual(isNullValue(collection), true, "找不到数据表");
+        this.proxy({ db, collection, method, params })
 
         /**
          * 运行命令
          * 数据库游标
+         * 连接数据表
          */
-        let cursor = false;
+        let cursor = false
+        let collection = this.mongodb[msg.db][msg.collection]
+
         /**
          * 循环方法
          * 不断叠加游标
@@ -77,20 +74,20 @@ module.exports = class {
          */
         for (let { 
           method, params 
-        } of sql.use) {
+        } of msg.use) {
           // 调用方法
-          cursor = ([collection, cursor])[ cursor === false ? 0 : 1 ][method](params);
-        };
+          cursor = ([collection, cursor])[ cursor === false ? 0 : 1 ][method](params)
+        }
 
         /**
          * 输出
          */
-        resolve(cursor[sql.cursor]());
+        resolve(cursor[msg.cursor]())
       } catch (error) {
         /**
          * 返回错误
          */
-        reject(error);
+        reject(error)
       }
     })
   }
