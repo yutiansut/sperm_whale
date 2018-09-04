@@ -3,7 +3,10 @@
 const assert = require("assert").strict
 const events = require("events")
 const protocol = require("./protocol")
-const auth = require("../auth")
+
+// evetns.
+const auth = require("../events/auth")
+const crud = require("../events/crud")
 
 /**
  * TCP服务类
@@ -80,8 +83,14 @@ module.exports = class {
 
           // 解包
           let msgHandle = protocol.parse(bufferHandle)
-          let msgBody = JSON.parse(msgHandle.data.toString())
-          await this.dataBaseProse.parse()
+          let msgBody = JSON.parse(msgHandle.buffer.toString())
+
+          // 过滤选中
+          switch(msgBody.event) {
+            case "auth":
+              auth(msgBody.data)
+            break
+          }
         } catch (error) {
           this.eventEmitters.emit("error", "socket close")
         }

@@ -124,6 +124,8 @@ exports.from = function (data) {
  */
 exports.parse = function (data) {
   try {
+    // 包头长度
+    let HEAD_LENGHT = 11
 
     // 数据包句柄
     let dataHandle = {
@@ -144,7 +146,7 @@ exports.parse = function (data) {
     dataHandle.length += data.readInt16BE(9, 10)
 
     // 截取包数据实体
-    dataHandle.buffer = data.slice(11, data.length)
+    dataHandle.buffer = data.slice(HEAD_LENGHT, dataHandle.length + HEAD_LENGHT)
 
     // 返回解析数据
     return dataHandle

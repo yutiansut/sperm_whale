@@ -46,8 +46,10 @@
 
 // system env.
 const { 
-  SPERMWHALE_HOME = __dirname,
-  SPERMWHALE_CONF = "./configure.toml",
+  SPERMWHALE_APP_CONF = "./configure/app.toml",
+  SPERMWHALE_KAFKA_CONF = "./configure/kafka.json",
+  SPERMWHALE_MONGODB_CONF = "./configure/mongodb.json",
+  SPERMWHALE_REDIS_CONF = "./configure/redis.json",
 } = process.env
 
 // Modules.
@@ -56,15 +58,21 @@ const net = require("net")
 const toml = require("toml")
 
 // bin.
-const busService = require("spermwhales/busService")
+const connect = require("./bin/database/connect")
 const taskNumber = require("./bin/task/number")
 const tcpService = require("./bin/tcp/service")
 const dataBaseProse = require("./bin/database/parse")
 
+// configure.
+const kafka = require(SPERMWHALE_KAFKA_CONF)
+const mongodb = require(SPERMWHALE_MONGODB_CONF)
+const redis = require(SPERMWHALE_REDIS_CONF)
+const app = toml.parse(fs.readFileSync(SPERMWHALE_APP_CONF))
+const configure = Object.assign(app, { kafka, redis, mongodb })
+
 // constructor.
-const busServices = new busService()
-const dataBaseProses = new dataBaseProse(busService)
-const configure = toml.parse(fs.readFileSync(SPERMWHALE_CONF))
+const connects = new connect()
+const dataBaseProses = new dataBaseProse(connects)
 const tcpHandle = new tcpService({ configure, dataBaseProses })
 const server = net.createServer(socket => tcpHandle.handle(socket))
 
@@ -73,5 +81,6 @@ tcpHandle.bind(server)
 server.listen(configure.net.bindPort)
 
 // listen database.
-busServices.Redis(configure.redis)
-busServices.Mongodb(configure.mongodb)
+connects.topologyRedis(configure.redis)
+connects.topologyMongoDB(configure.mongodb)
+connects.topologyKafka(configure.kafka)

@@ -1,8 +1,8 @@
 const client = require("../../clicnt/index")
 
 const clients = new client({
-  port: 88,
-  host: "localhost",
+  port: 89,
+  host: "www.xivistudios.com",
   auth: { username: "panda", password: "test" }
 })
 

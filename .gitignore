@@ -28,6 +28,5 @@ typings/
 .next
 .toml
 .vscode
-rlsWeb/target/
 configure
 package-lock.json

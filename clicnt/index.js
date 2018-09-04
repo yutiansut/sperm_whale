@@ -2,6 +2,7 @@
 
 const net = require("net")
 const events = require("events")
+const protocol = require("../bin/tcp/protocol")
 const eventEmitter = new events.EventEmitter()
 
 function Handle (options = {}) {
@@ -22,7 +23,10 @@ function Handle (options = {}) {
   this.socket.on("data", data => eventEmitter.emit("_data", Object.assign(this, { _data: data })))
   this.socket.on("error", error => eventEmitter.emit("_error", Object.assign(this, { _error: error })))
 
-  eventEmitter.on("_send", data => this.socket.write(Buffer.from(JSON.stringify(data))))
+  eventEmitter.on("_send", data => {
+    this.socket.write(protocol.from(JSON.stringify(data)))
+  })
+
   eventEmitter.emit("_send", {
     event: "auth",
     data: options.auth
