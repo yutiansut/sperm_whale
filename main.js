@@ -63,10 +63,10 @@ const dataBaseProse = require("./bin/database/parse")
 
 // constructor.
 const busServices = new busService()
-const configure = toml.parse(fs.readFileSync(SPERMWHALE_CONF))
-const tcpHandle = new tcpService({ configure, dataBaseProse })
-const server = net.createServer(socket => tcpHandle.handle(socket))
 const dataBaseProses = new dataBaseProse(busService)
+const configure = toml.parse(fs.readFileSync(SPERMWHALE_CONF))
+const tcpHandle = new tcpService({ configure, dataBaseProses })
+const server = net.createServer(socket => tcpHandle.handle(socket))
 
 // listen.
 tcpHandle.bind(server)
