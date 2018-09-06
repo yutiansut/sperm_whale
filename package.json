@@ -8,10 +8,12 @@
     },
     "main": "./main.js",
     "dependencies": {
-        "toml": "*",
+        "chalk": "^2.4.1",
+        "moment": "*",
         "mongodb": "*",
         "redis": "*",
-        "spermwhales": "*"
+        "spermwhales": "*",
+        "toml": "*"
     },
     "devDependencies": {},
     "keywords": [

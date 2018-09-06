@@ -1,7 +1,13 @@
 "use strict"
 
+
+/**
+ * modules.
+ * @package
+ */
 const assert = require("assert").strict
 const isNullValue = require("../util").isNullValue
+
 
 /**
  * 数据库命令解析类

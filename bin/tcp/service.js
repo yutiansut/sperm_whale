@@ -1,12 +1,15 @@
 "use strict"
 
+
+/**
+ * Modules.
+ * @package
+ */
 const assert = require("assert").strict
 const events = require("events")
 const protocol = require("./protocol")
-
-// evetns.
 const auth = require("../events/auth")
-const crud = require("../events/crud")
+
 
 /**
  * TCP服务类
@@ -20,7 +23,7 @@ module.exports = class {
    * 初始化
    * @private
    */
-  constructor ({ configure, dataBaseProse }) {
+  constructor ({ configure, dataBaseProse, event }) {
     this.configure = configure
     this.dataBaseProse = dataBaseProse
     this.eventEmitters = new events.EventEmitter()

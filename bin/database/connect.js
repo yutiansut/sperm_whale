@@ -1,5 +1,6 @@
 "use strict"
 
+
 /**
  * packages.
  * @package
@@ -9,6 +10,7 @@ const redis = require("redis")
 const kafka = require("node-rdkafka")
 const assert = require("assert").strict
 const { MongoClient } = require("mongodb")
+
 
 /**
  * 连接句柄
@@ -24,6 +26,7 @@ function collectionHandle () {
   this.k = null
 }
 
+
 /**
  * 获取MongoDB连接
  * @returns {m}
@@ -34,6 +37,7 @@ Object.defineProperty(collectionHandle.prototype, "mongodb", {
     return this.m || {}
   }
 })
+
 
 /**
  * 获取Redis连接
@@ -46,6 +50,7 @@ Object.defineProperty(collectionHandle.prototype, "redis", {
   }
 })
 
+
 /**
  * 获取Kafka连接
  * @returns {k}
@@ -56,6 +61,7 @@ Object.defineProperty(collectionHandle.prototype, "kafka", {
     return this.k || {}
   }
 })
+
 
 /**
  * 连接到MongoDB服务器
@@ -74,6 +80,7 @@ collectionHandle.prototype.topologyMongoDB = function (options) { Object.keys(op
   })
 }) }
 
+
 /**
  * 连接到Redis
  * @method
@@ -91,6 +98,7 @@ collectionHandle.prototype.topologyRedis = function (options) {
   })
 }
 
+
 /**
  * 连接到Kafka
  * @method
@@ -107,6 +115,7 @@ collectionHandle.prototype.topologyKafka = function (options) {
     assert.ifError(error)
   })
 }
+
 
 // exports
 module.exports = collectionHandle

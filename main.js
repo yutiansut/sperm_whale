@@ -56,12 +56,14 @@ const {
 const fs = require("fs")
 const net = require("net")
 const toml = require("toml")
+const events = require("events")
 
 // bin.
 const connect = require("./bin/database/connect")
 const taskNumber = require("./bin/task/number")
 const tcpService = require("./bin/tcp/service")
 const dataBaseProse = require("./bin/database/parse")
+const journal = require("./bin/journal")
 
 // configure.
 const kafka = require(SPERMWHALE_KAFKA_CONF)
@@ -71,9 +73,10 @@ const app = toml.parse(fs.readFileSync(SPERMWHALE_APP_CONF))
 const configure = Object.assign(app, { kafka, redis, mongodb })
 
 // constructor.
+const event = new events.EventEmitter()
 const connects = new connect()
 const dataBaseProses = new dataBaseProse(connects)
-const tcpHandle = new tcpService({ configure, dataBaseProses })
+const tcpHandle = new tcpService({ configure, dataBaseProses, event })
 const server = net.createServer(socket => tcpHandle.handle(socket))
 
 // listen.
@@ -84,3 +87,6 @@ server.listen(configure.net.bindPort)
 connects.topologyRedis(configure.redis)
 connects.topologyMongoDB(configure.mongodb)
 connects.topologyKafka(configure.kafka)
+
+// log
+journal(event, configure)
