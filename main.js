@@ -54,16 +54,18 @@ const {
 
 // Modules.
 const fs = require("fs")
-const net = require("net")
+const http = require("http")
 const toml = require("toml")
 const events = require("events")
+const express = require("express")
+const bodyParser = require("body-parser")
 
 // bin.
-const connect = require("./bin/database/connect")
-const taskNumber = require("./bin/task/number")
-const tcpService = require("./bin/tcp/service")
-const dataBaseProse = require("./bin/database/parse")
 const journal = require("./bin/journal")
+const connect = require("./bin/database/connect")
+const bindHandle = require("./bin/router/bindHandle")
+const routers = require("./bin/router/routers")
+const auth = require("./bin/events/auth")
 
 // configure.
 const kafka = require(SPERMWHALE_KAFKA_CONF)
@@ -73,20 +75,34 @@ const app = toml.parse(fs.readFileSync(SPERMWHALE_APP_CONF))
 const configure = Object.assign(app, { kafka, redis, mongodb })
 
 // constructor.
-const event = new events.EventEmitter()
+const expressHandle = express()
+const httpService = http.createServer(expressHandle)
+const routerHandle = new bindHandle()
 const connects = new connect()
-const dataBaseProses = new dataBaseProse(connects)
-const tcpHandle = new tcpService({ configure, dataBaseProses, event })
-const server = net.createServer(socket => tcpHandle.handle(socket))
-
-// listen.
-tcpHandle.bind(server)
-server.listen(configure.net.bindPort)
+const journalHandle = new journal(configure)
 
 // listen database.
 connects.topologyRedis(configure.redis)
 connects.topologyMongoDB(configure.mongodb)
 connects.topologyKafka(configure.kafka)
 
-// log
-journal(event, configure)
+// router use.
+routerHandle.use("connects", connects)
+routerHandle.use("configure", configure)
+routerHandle.use("auth", auth)
+routerHandle.bindRouter(routerHandle, routers)
+
+// express use.
+expressHandle.use(bodyParser.json())
+expressHandle.use(bodyParser.urlencoded({ extended: true }))
+expressHandle.use(routerHandle.express)
+
+// listen.
+httpService.listen(configure.net.bindPort)
+
+setTimeout(function () {
+  console.log(connects.kafka)
+}, 2000)
+
+// log bind.
+// journalHandle.use()

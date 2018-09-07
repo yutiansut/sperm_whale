@@ -83,10 +83,18 @@ journalHandle.prototype.diskStoage = function (journal) {
  * @param {object} configure
  * @module
  */
-module.exports = function (eventHandle, configure) {
+journalHandle.prototype.use = function (handle) {
   eventHandle.on("journal", function (data) { try {
-    let journalhandle = new journalHandle(configure)
-    let journal = journalhandle.toStr(data)
-    journalhandle.diskStoage(journal)
+    this.diskStoage(this.toStr(data))
+  } catch (error) { console.warn(chalk.red(error)) }})
+  handle.on("error", function (data) { try {
+    this.diskStoage(this.toStr(data))
   } catch (error) { console.warn(chalk.red(error)) }})
 }
+
+
+/**
+ * exports journalHandle.
+ * @exports
+ */
+module.exports = journalHandle

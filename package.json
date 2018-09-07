@@ -8,12 +8,14 @@
     },
     "main": "./main.js",
     "dependencies": {
-        "chalk": "^2.4.1",
+        "chalk": "*",
         "moment": "*",
         "mongodb": "*",
         "redis": "*",
-        "spermwhales": "*",
-        "toml": "*"
+        "toml": "*",
+        "express": "*",
+        "body-parser": "*",
+        "node-rdkafka": "*"
     },
     "devDependencies": {},
     "keywords": [

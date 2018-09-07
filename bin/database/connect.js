@@ -68,15 +68,18 @@ Object.defineProperty(collectionHandle.prototype, "kafka", {
  * @method
  * @param {object} [options={}] 连接配置列表
  */
-collectionHandle.prototype.topologyMongoDB = function (options) { Object.keys(options).forEach((dbName) => {
+collectionHandle.prototype.topologyMongoDB = function (options, callback = new Function()) { Object.keys(options).forEach((dbName) => {
   let { host, collection } = options[dbName]
   MongoClient.connect(host, options[dbName].options || {}, (error, connectHandle) => {
     assert.ifError(error)
     this.m = {}
     this.m[dbName] = {}
-    for (let collectionName of collection) this
-    .m[dbName][collectionName] = connectHandle
-    .db(dbName).collection(collectionName)
+    for (let collectionName of collection) {
+      this
+      .m[dbName][collectionName] = connectHandle
+      .db(dbName).collection(collectionName)
+    }
+    callback()
   })
 }) }
 
@@ -86,12 +89,13 @@ collectionHandle.prototype.topologyMongoDB = function (options) { Object.keys(op
  * @method
  * @param {object} [options={}] 连接配置
  */
-collectionHandle.prototype.topologyRedis = function (options) {
+collectionHandle.prototype.topologyRedis = function (options, callback = new Function()) {
   assert.deepStrictEqual(typeof options, "object")
   this.r = redis.createClient(options)
   this.r.on("ready", () => {
     this.r.__proto__.Del = util.promisify(this.r.del).bind(this.r)
     this.r.__proto__.Get = util.promisify(this.r.get).bind(this.r)
+    callback()
   })
   this.r.on("error", function (error) {
     assert.ifError(error)
@@ -104,7 +108,7 @@ collectionHandle.prototype.topologyRedis = function (options) {
  * @method
  * @param {object} [options={}] 连接配置
  */
-collectionHandle.prototype.topologyKafka = function (options) {
+collectionHandle.prototype.topologyKafka = function (options, callback = new Function()) {
   assert.deepStrictEqual(typeof options, "object")
   this.k = new kafka.Producer({ 
     "metadata.broker.list": options.connect, 
@@ -114,6 +118,7 @@ collectionHandle.prototype.topologyKafka = function (options) {
   this.k.on("event.error", function(error) {
     assert.ifError(error)
   })
+  callback()
 }
 
 

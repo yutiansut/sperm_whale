@@ -7,6 +7,7 @@
  */
 const assert = require("assert").strict
 const isNullValue = require("../util").isNullValue
+const auth = require("../events/auth")
 
 
 /**
@@ -15,9 +16,10 @@ const isNullValue = require("../util").isNullValue
  * @public
  */
 module.exports = class {
-  constructor ({ mongodb, redis }) {
+  constructor ({ mongodb, redis }, configure) {
     this.mongodb = mongodb
     this.redis = redis
+    this.configure = configure
   }
 
 
@@ -25,14 +27,6 @@ module.exports = class {
    * 代理
    */
   proxy ({ db, collection, method, params }) {
-
-  }
-
-
-  /**
-   * 认证
-   */
-  auth () {
 
   }
 
